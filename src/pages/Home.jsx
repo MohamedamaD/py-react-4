@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { ListGroup } from "react-bootstrap";
+import { Button, ListGroup } from "react-bootstrap";
 
 export const Home = () => {
   const [quotes, setQuotes] = useState([]);
   const [activeQuote, setActiveQuote] = useState(0);
+  const [skip, setSkip] = useState(0);
 
   useEffect(() => {
     async function fetchQuotes() {
       try {
-        const response = await axios.get("https://dummyjson.com/quotes");
+        const response = await axios.get(
+          `https://dummyjson.com/quotes?limit=5&skip=${skip}`,
+        );
         setQuotes(response.data.quotes);
       } catch (error) {
         console.log(error);
@@ -17,12 +20,12 @@ export const Home = () => {
     }
 
     fetchQuotes();
-  }, []);
+  }, [skip]);
 
   return (
     <div className="text-center">
       <h1 className="mb-4">Trending Quotes</h1>
-      <ListGroup>
+      <ListGroup className="mb-4">
         {quotes.map((quote, index) => (
           // Active when Hover
           <ListGroup.Item
@@ -44,6 +47,14 @@ export const Home = () => {
           </ListGroup.Item>
         ))}
       </ListGroup>
+
+      <Button
+        variant="success"
+        size="lg"
+        onClick={() => setSkip((prev) => prev + 5)}
+      >
+        Next
+      </Button>
     </div>
   );
 };
